@@ -41,14 +41,13 @@ def display_weather_info(response):
         st.subheader("Temperature:")
         hourly = response.Hourly()
         st.write(f"Temperature: {hourly.Variables(0).ValuesAsNumpy()[0]}°C")
-        st.write(f"Feels Like: {hourly.Variables(2).ValuesAsNumpy()[0]}°C")
         st.write(f"Minimum Temperature: {hourly.Variables(3).ValuesAsNumpy()[0]}°C")
         st.write(f"Maximum Temperature: {hourly.Variables(4).ValuesAsNumpy()[0]}°C")
 
         
         st.subheader("Humidity and Pressure:")
         st.write(f"Humidity: {hourly.Variables(1).ValuesAsNumpy()[0]}%")
-        st.write(f"Pressure: {response.get('pressure', 'N/A')} hPa")
+        
 
         st.subheader("Wind:")
         st.write(f"Wind Speed: {response.get('wind_speed', 'N/A')} km/h")
@@ -58,11 +57,6 @@ def display_weather_info(response):
         st.write(f"Precipitation Volume: {response.get('precipitation_volume', 'N/A')} mm")
         st.write(f"Probability of Precipitation: {response.get('probability_of_precipitation', 'N/A')}%")
 
-        st.subheader("Visibility:")
-        st.write(f"Visibility: {response.get('visibility', 'N/A')} km")
-
-        st.subheader("Cloudiness:")
-        st.write(f"Cloudiness: {response.get('cloudiness', 'N/A')}%")
 
         st.subheader("UV Index:")
         st.write(f"UV Index: {response.get('uv_index', 'N/A')}")

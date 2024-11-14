@@ -7,26 +7,34 @@ from retry_requests import retry
 
 st.title("Weather Station🌤️")
 
+# Replace 'YOUR_OPENCAGE_API_KEY' with your actual OpenCage API key
+OPENCAGE_API_KEY = 'YOUR_OPENCAGE_API_KEY'
+
+def get_latitude_longitude(city):
+    geocode_url = f"https://api.opencagedata.com/geocode/v1/json?q={city}&key={OPENCAGE_API_KEY}"
+    try:
+        response = requests.get(geocode_url)
+        response_data = response.json()
+        if response_data['results']:
+            latitude = response_data['results'][0]['geometry']['lat']
+            longitude = response_data['results'][0]['geometry']['lng']
+            return latitude, longitude
+        else:
+            st.error("City not found.")
+            return None, None
+    except Exception as e:
+        st.error(f"Error fetching geocode data: {e}")
+        return None, None
+
 def get_weather_data(city):
+    latitude, longitude = get_latitude_longitude(city)
+    if latitude is None or longitude is None:
+        return None
+
     cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
     retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
     openmeteo = openmeteo_requests.Client(session=retry_session)
 
-    # Geocoding to get latitude and longitude based on city name
-    geocode_url = "https://api.open-meteo.com/v1/geocode"
-    geocode_params = {
-        "city": city
-    }
-    
-    try:
-        geocode_response = openmeteo.weather_api(geocode_url, params=geocode_params)
-        latitude = geocode_response[0].Latitude()
-        longitude = geocode_response[0].Longitude()
-    except Exception as e:
-        st.error(f"Error fetching geocode data: {e}")
-        return None
-
-    # Fetch weather data using latitude and longitude
     weather_url = "https://api.open-meteo.com/v1/forecast"
     weather_params = {
         "latitude": latitude,

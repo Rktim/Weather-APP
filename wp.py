@@ -49,14 +49,6 @@ def display_weather_info(response):
         st.write(f"Humidity: {hourly.Variables(1).ValuesAsNumpy()[0]}%")
         
 
-        st.subheader("Wind:")
-        st.write(f"Wind Speed: {response.get('wind_speed', 'N/A')} km/h")
-        st.write(f"Wind Direction: {response.get('wind_direction', 'N/A')}°")
-
-        st.subheader("Precipitation:")
-        st.write(f"Precipitation Volume: {response.get('precipitation_volume', 'N/A')} mm")
-        st.write(f"Probability of Precipitation: {response.get('probability_of_precipitation', 'N/A')}%")
-
 
         st.subheader("UV Index:")
         st.write(f"UV Index: {response.get('uv_index', 'N/A')}")

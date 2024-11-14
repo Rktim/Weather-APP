@@ -33,6 +33,8 @@ st.write(f"Coordinates: {response.Latitude()}°N {response.Longitude()}°E")
 st.write(f"Elevation: {response.Elevation()} m asl")
 st.write(f"Timezone: {response.Timezone()} {response.TimezoneAbbreviation()}")
 st.write(f"Timezone difference to GMT+0: {response.UtcOffsetSeconds()} s")
+hourly = response.Hourly()
+st.write(f"Temperature: {hourly.Variables(0).ValuesAsNumpy()[0]}°C")
 
 # Process hourly data. The order of variables needs to be the same as requested.
 hourly = response.Hourly()

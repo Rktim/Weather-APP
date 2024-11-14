@@ -29,8 +29,8 @@ def get_weather_data(city):
 def display_weather_info(response):
     if response:
         st.subheader("Location Details:")
-        st.write(f"City: {response.City()}")
-        st.write(f"Country: {response.Country()}")
+        st.write(f"City: {response.get('city', 'N/A')}")
+        st.write(f"Country: {response.get('country', 'N/A')}")
         st.write(f"Latitude: {response.Latitude()}°N")
         st.write(f"Longitude: {response.Longitude()}°E")
 
@@ -45,37 +45,37 @@ def display_weather_info(response):
         st.write(f"Maximum Temperature: {response.Hourly().Variables(4).ValuesAsNumpy()[0]}°C")
 
         st.subheader("Weather Condition:")
-        st.write(f"Condition: {response.WeatherCondition()}")
-        st.write(f"Condition Code or Icon: {response.ConditionCode()}")
-        st.write(f"Description: {response.Description()}")
+        st.write(f"Condition: {response.get('weather_condition', 'N/A')}")
+        st.write(f"Condition Code or Icon: {response.get('condition_code', 'N/A')}")
+        st.write(f"Description: {response.get('description', 'N/A')}")
 
         st.subheader("Humidity and Pressure:")
         st.write(f"Humidity: {response.Hourly().Variables(1).ValuesAsNumpy()[0]}%")
-        st.write(f"Pressure: {response.Pressure()} hPa")
+        st.write(f"Pressure: {response.get('pressure', 'N/A')} hPa")
 
         st.subheader("Wind:")
-        st.write(f"Wind Speed: {response.WindSpeed()} km/h")
-        st.write(f"Wind Direction: {response.WindDirection()}°")
+        st.write(f"Wind Speed: {response.get('wind_speed', 'N/A')} km/h")
+        st.write(f"Wind Direction: {response.get('wind_direction', 'N/A')}°")
 
         st.subheader("Precipitation:")
-        st.write(f"Precipitation Volume: {response.PrecipitationVolume()} mm")
-        st.write(f"Probability of Precipitation: {response.ProbabilityOfPrecipitation()}%")
+        st.write(f"Precipitation Volume: {response.get('precipitation_volume', 'N/A')} mm")
+        st.write(f"Probability of Precipitation: {response.get('probability_of_precipitation', 'N/A')}%")
 
         st.subheader("Visibility:")
-        st.write(f"Visibility: {response.Visibility()} km")
+        st.write(f"Visibility: {response.get('visibility', 'N/A')} km")
 
         st.subheader("Cloudiness:")
-        st.write(f"Cloudiness: {response.Cloudiness()}%")
+        st.write(f"Cloudiness: {response.get('cloudiness', 'N/A')}%")
 
         st.subheader("UV Index:")
-        st.write(f"UV Index: {response.UVIndex()}")
+        st.write(f"UV Index: {response.get('uv_index', 'N/A')}")
 
         st.subheader("Air Quality (Optional):")
-        st.write(f"Air Quality Index (AQI): {response.AQI()}")
+        st.write(f"Air Quality Index (AQI): {response.get('aqi', 'N/A')}")
 
         st.subheader("Sunrise and Sunset:")
-        st.write(f"Sunrise Time: {response.SunriseTime()}")
-        st.write(f"Sunset Time: {response.SunsetTime()}")
+        st.write(f"Sunrise Time: {response.get('sunrise_time', 'N/A')}")
+        st.write(f"Sunset Time: {response.get('sunset_time', 'N/A')}")
 
 city = st.text_input("Enter City Name:", "ITANAGAR")
 

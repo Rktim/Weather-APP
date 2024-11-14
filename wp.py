@@ -7,15 +7,15 @@ from retry_requests import retry
 
 st.title("Weather Station🌤️")
 
-def get_weather_data(latitude, longitude):
+def get_weather_data(city):
     cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
     retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
     openmeteo = openmeteo_requests.Client(session=retry_session)
 
     url = "https://api.open-meteo.com/v1/forecast"
     params = {
-        "latitude": latitude,
-        "longitude": longitude,
+        "latitude": 0,  # Placeholder, will be replaced with actual latitude
+        "longitude": 0,  # Placeholder, will be replaced with actual longitude
         "hourly": ["temperature_2m", "relative_humidity_2m", "dew_point_2m", "rain", "cloud_cover"]
     }
     
@@ -79,9 +79,7 @@ def display_weather_info(response):
         st.write(f"Sunset Time: {response.get('sunset_time', 'N/A')}")
 
 city = st.text_input("Enter City Name:", "ITANAGAR")
-latitude = st.number_input("Enter Latitude:", value=52.52, format="%.6f", min_value=-90.0, max_value=90.0)
-longitude = st.number_input("Enter Longitude:", value=13.41, format="%.6f", min_value=-180.0, max_value=180.0)
 
 if st.button("Get Weather Data"):
-    response = get_weather_data(latitude, longitude)
+    response = get_weather_data(city)
     display_weather_info(response)

@@ -7,15 +7,15 @@ from retry_requests import retry
 
 st.title("Weather Station🌤️")
 
-def get_weather_data(city):
+def get_weather_data(latitude, longitude):
     cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
     retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
     openmeteo = openmeteo_requests.Client(session=retry_session)
 
     url = "https://api.open-meteo.com/v1/forecast"
     params = {
-        "latitude": 0,  # Placeholder, will be replaced with actual latitude
-        "longitude": 0,  # Placeholder, will be replaced with actual longitude
+        "latitude": latitude,
+        "longitude": longitude,
         "hourly": ["temperature_2m", "relative_humidity_2m", "dew_point_2m", "rain", "cloud_cover"]
     }
     
@@ -29,20 +29,21 @@ def get_weather_data(city):
 def display_weather_info(response):
     if response:
         st.subheader("Location Details:")
-        st.write(f"City: {response.get('city', 'N/A')}")
-        st.write(f"Country: {response.get('country', 'N/A')}")
         st.write(f"Latitude: {response.Latitude()}°N")
         st.write(f"Longitude: {response.Longitude()}°E")
+        st.write(f"Elevation: {response.Elevation()} m asl")
+        st.write(f"Timezone: {response.Timezone()} {response.TimezoneAbbreviation()}")
+        st.write(f"Timezone difference to GMT+0: {response.UtcOffsetSeconds()} s")
 
         st.subheader("Time Information:")
         st.write(f"Timestamp: {response.UtcOffsetSeconds()}")
-        st.write(f"Time Zone: {response.Timezone()}")
 
         st.subheader("Temperature:")
-        st.write(f"Temperature: {response.Hourly().Variables(0).ValuesAsNumpy()[0]}°C")
-        st.write(f"Feels Like: {response.Hourly().Variables(2).ValuesAsNumpy()[0]}°C")
-        st.write(f"Minimum Temperature: {response.Hourly().Variables(3).ValuesAsNumpy()[0]}°C")
-        st.write(f"Maximum Temperature: {response.Hourly().Variables(4).ValuesAsNumpy()[0]}°C")
+        hourly = response.Hourly()
+        st.write(f"Temperature: {hourly.Variables(0).ValuesAsNumpy()[0]}°C")
+        st.write(f"Feels Like: {hourly.Variables(2).ValuesAsNumpy()[0]}°C")
+        st.write(f"Minimum Temperature: {hourly.Variables(3).ValuesAsNumpy()[0]}°C")
+        st.write(f"Maximum Temperature: {hourly.Variables(4).ValuesAsNumpy()[0]}°C")
 
         st.subheader("Weather Condition:")
         st.write(f"Condition: {response.get('weather_condition', 'N/A')}")
@@ -50,7 +51,7 @@ def display_weather_info(response):
         st.write(f"Description: {response.get('description', 'N/A')}")
 
         st.subheader("Humidity and Pressure:")
-        st.write(f"Humidity: {response.Hourly().Variables(1).ValuesAsNumpy()[0]}%")
+        st.write(f"Humidity: {hourly.Variables(1).ValuesAsNumpy()[0]}%")
         st.write(f"Pressure: {response.get('pressure', 'N/A')} hPa")
 
         st.subheader("Wind:")
@@ -78,7 +79,9 @@ def display_weather_info(response):
         st.write(f"Sunset Time: {response.get('sunset_time', 'N/A')}")
 
 city = st.text_input("Enter City Name:", "ITANAGAR")
+latitude = st.number_input("Enter Latitude:", value=52.52, format="%.6f", min_value=-90.0, max_value=90.0)
+longitude = st.number_input("Enter Longitude:", value=13.41, format="%.6f", min_value=-180.0, max_value=180.0)
 
 if st.button("Get Weather Data"):
-    response = get_weather_data(city)
+    response = get_weather_data(latitude, longitude)
     display_weather_info(response)

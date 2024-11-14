@@ -45,11 +45,7 @@ def display_weather_info(response):
         st.write(f"Minimum Temperature: {hourly.Variables(3).ValuesAsNumpy()[0]}°C")
         st.write(f"Maximum Temperature: {hourly.Variables(4).ValuesAsNumpy()[0]}°C")
 
-        st.subheader("Weather Condition:")
-        st.write(f"Condition: {response.get('weather_condition', 'N/A')}")
-        st.write(f"Condition Code or Icon: {response.get('condition_code', 'N/A')}")
-        st.write(f"Description: {response.get('description', 'N/A')}")
-
+        
         st.subheader("Humidity and Pressure:")
         st.write(f"Humidity: {hourly.Variables(1).ValuesAsNumpy()[0]}%")
         st.write(f"Pressure: {response.get('pressure', 'N/A')} hPa")

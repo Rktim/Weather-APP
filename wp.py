@@ -1,9 +1,8 @@
 import streamlit as st
-import requests
-import openmeteo_requests
 import requests_cache
 import pandas as pd
 from retry_requests import retry
+import openmeteo_requests
 
 st.title("Weather Station🌤️")
 
@@ -44,21 +43,27 @@ def display_weather_info(response):
         st.write(f"Minimum Temperature: {hourly.Variables(3).ValuesAsNumpy()[0]}°C")
         st.write(f"Maximum Temperature: {hourly.Variables(4).ValuesAsNumpy()[0]}°C")
 
-        
         st.subheader("Humidity and Pressure:")
         st.write(f"Humidity: {hourly.Variables(1).ValuesAsNumpy()[0]}%")
         
+        # Displaying optional fields only if they are available
+        try:
+            uv_index = getattr(response, 'uv_index', 'N/A')
+            st.subheader("UV Index:")
+            st.write(f"UV Index: {uv_index}")
 
+            aqi = getattr(response, 'aqi', 'N/A')
+            st.subheader("Air Quality (Optional):")
+            st.write(f"Air Quality Index (AQI): {aqi}")
 
-        st.subheader("UV Index:")
-        st.write(f"UV Index: {response.get('uv_index', 'N/A')}")
+            sunrise_time = getattr(response, 'sunrise_time', 'N/A')
+            sunset_time = getattr(response, 'sunset_time', 'N/A')
+            st.subheader("Sunrise and Sunset:")
+            st.write(f"Sunrise Time: {sunrise_time}")
+            st.write(f"Sunset Time: {sunset_time}")
 
-        st.subheader("Air Quality (Optional):")
-        st.write(f"Air Quality Index (AQI): {response.get('aqi', 'N/A')}")
-
-        st.subheader("Sunrise and Sunset:")
-        st.write(f"Sunrise Time: {response.get('sunrise_time', 'N/A')}")
-        st.write(f"Sunset Time: {response.get('sunset_time', 'N/A')}")
+        except AttributeError:
+            st.write("Some optional data is not available.")
 
 city = st.text_input("Enter City Name:", "ITANAGAR")
 
